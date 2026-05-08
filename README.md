@@ -1,70 +1,162 @@
-# Getting Started with Create React App
+# Beyond Box Skill Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> **NOTE:** This app uses localStorage to save data in the browser. Data is saved per device and is not shared between devices or browsers.
 
-## Available Scripts
+A premium, emotionally warm, parent-friendly **Skill Tracker** web app for the [Beyond Box](https://beyondbox.in) educational platform — *Humans of Science STEM Series*.
 
-In the project directory, you can run:
+Track your child's learning journey across 11 STEM books by rating 6 key skills per book. View radar charts, personalized insights, milestone badges, and an overall growth summary.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Getting Started
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Install dependencies
+```bash
+npm install
+```
 
-### `npm test`
+### Run locally (development)
+```bash
+npm start
+```
+Opens at [http://localhost:3000](http://localhost:3000).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Build for production
+```bash
+npm run build
+```
+Output goes to the `build/` folder.
 
-### `npm run build`
+### How to deploy to GitHub Pages
+Make sure `package.json` contains:
+```json
+"homepage": "https://YOUR-GITHUB-USERNAME.github.io/beyond-box-skill-tracker"
+```
+*(Replace YOUR-GITHUB-USERNAME with your actual username)*
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Then run:
+```bash
+npm run deploy
+```
+This will automatically build and push to the `gh-pages` branch.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📁 Folder Structure
 
-### `npm run eject`
+```
+beyond-box-skill-tracker/
+├── public/
+│   └── index.html              ← HTML shell with SEO meta tags + Google Fonts
+├── src/
+│   ├── components/
+│   │   ├── BookCard.jsx          ← Individual book button on home page
+│   │   ├── SkillRatingModal.jsx  ← Slide-up modal for rating 6 skills per book
+│   │   ├── BookAnalysis.jsx      ← Radar chart + insights for one book
+│   │   ├── OverallDashboard.jsx  ← Full overall analysis page component
+│   │   ├── ProgressBar.jsx       ← CSS-only animated circular progress ring
+│   │   ├── MilestoneBadge.jsx    ← 🌱⭐🏆 badge component based on avg score
+│   │   └── SkillLegend.jsx       ← Always-visible color legend (red/orange/yellow/green)
+│   ├── data/
+│   │   ├── books.js              ← Book metadata + SKILLS + rating color constants
+│   │   └── storage.js            ← All localStorage read/write logic
+│   ├── utils/
+│   │   ├── scoreUtils.js         ← Average calculations, skill comparisons, badge logic
+│   │   └── insightGenerator.js   ← Auto-generates warm insight sentences + recommendations
+│   ├── pages/
+│   │   ├── HomePage.jsx          ← Landing page with all book cards + progress ring
+│   │   ├── BookAnalysisPage.jsx  ← Analysis page after rating a book
+│   │   └── OverallPage.jsx       ← Overall dashboard page
+│   ├── App.jsx                   ← React Router setup (3 routes)
+│   ├── App.css                   ← Full design system — no Tailwind, vanilla CSS
+│   └── index.js                  ← React root entry point
+├── package.json
+└── README.md
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📚 The Books
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+11 books from the **Humans of Science STEM Series** are included:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+| # | Book | Scientist |
+|---|------|-----------|
+| 1 | Marie's Mysterious Rock 🪨 | Marie Curie |
+| 2 | Einstein's Wonders ⚡ | Albert Einstein |
+| 3 | Archimedes' Explorations 🌊 | Archimedes |
+| 4 | Tesla's Dream 🔬 | Nikola Tesla |
+| 5 | 'Eureka!' Says Archimedes 💡 | Archimedes |
+| 6 | Katherine's Courage 🚀 | Katherine Johnson |
+| 7 | Ada's Algorithm 💻 | Ada Lovelace |
+| 8 | Vikram's Victory 🛸 | Vikram Sarabhai |
+| 9 | Einstein: The Global Citizen 🌍 | Albert Einstein |
+| 10 | Rosalind & the Secret Shot 🧬 | Rosalind Franklin |
+| 11 | Marie's Legacy Lives On ⚗️ | Marie Curie |
 
-## Learn More
+### ➕ How to Add a New Book
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Open `src/data/books.js` and add an entry to the `BOOKS` array:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```js
+{
+  id: "unique_snake_case_id",
+  name: "Book Title",
+  subtitle: "Humans of Science STEM Series",
+  color: "#HEXCOLOR",
+  colorDark: "#DARKERHEX",
+  bgGradient: "linear-gradient(135deg, #LIGHTHEX, #MAINHEX)",
+  emoji: "📗",
+  description: "Short description of the book",
+  scientist: "Scientist Name"
+}
+```
 
-### Code Splitting
+No other file needs to change — the app is fully data-driven.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 🎯 The 6 Skills Rated Per Book
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+| Skill | Icon | What it measures |
+|-------|------|-----------------|
+| Cognitive | 🧠 | Solving problems by thinking deeply |
+| Creative | 🎨 | Imagining and making something unique |
+| Communication | 💬 | Sharing ideas or explaining clearly |
+| Social-Emotional | 🤝 | Working together and understanding feelings |
+| Physical | 🏃 | Using hands, tools or exploring with senses |
+| Practical | 🔧 | Applying learning to real-life situations |
 
-### Making a Progressive Web App
+Rating scale: **1 = Not Yet**, **2 = Sometimes**, **3 = Mostly**, **4 = Always**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 💾 Data Storage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+All data is saved to **localStorage** — no backend, no account needed.
 
-### Deployment
+- Key format: `bb_book_{bookId}`
+- Stored fields: `bookId`, `ratings`, `completedAt`, `averageScore`
+- Clear all data: use `clearAll()` from `src/data/storage.js`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 🎨 Design System
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **Fonts**: Inter (body) + Poppins (headings) via Google Fonts
+- **Background**: `#F8F9FA` (warm light gray)
+- **Cards**: White, `border-radius: 16px`, soft shadow
+- **Score colors**: Red → Orange → Yellow-Green → Green
+- **Styling**: Vanilla CSS (`App.css`) — no Tailwind, no UI library
+
+---
+
+## 🖨️ Print Report
+
+The Overall Analysis page includes a **Print Report** button that triggers `window.print()`. Navigation and book grid are hidden in print mode.
+
+---
+
+## 📄 License
+
+MIT — Free to use, modify, and distribute.
