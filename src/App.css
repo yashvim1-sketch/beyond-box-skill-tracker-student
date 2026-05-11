@@ -436,27 +436,29 @@ h4 {
 
 /* ── MODAL ────────────────────────────────────────────────── */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  z-index: 9999 !important;
   backdrop-filter: blur(3px);
-  padding: 16px;
+  overflow: hidden !important;
 }
 
 .modal-sheet {
-  background: #fff;
-  border-radius: 24px;
-  width: 100%;
-  max-width: 680px;
-  max-height: 90vh;
-  overflow: hidden;
-  scrollbar-width: thin;
-  display: flex;
-  flex-direction: column;
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: calc(100vw - 32px) !important;
+  max-width: 720px !important;
+  max-height: 88vh !important;
+  background: #fff !important;
+  border-radius: 24px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35) !important;
 }
 
 .modal-header {
@@ -465,9 +467,9 @@ h4 {
   justify-content: space-between;
   padding: 22px 24px;
   border-radius: 24px 24px 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
 }
 
 .modal-header-left {
@@ -507,6 +509,7 @@ h4 {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .modal-close-btn:hover {
@@ -518,7 +521,9 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  overflow-y: auto;
+  overflow-y: auto !important;
+  max-height: calc(88vh - 92px) !important;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Skill rows in modal */
