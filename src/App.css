@@ -441,12 +441,12 @@ h4 {
   background: rgba(0, 0, 0, 0.55);
   z-index: 9999;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   /* ← changed */
   justify-content: center;
   padding: 5vh 16px;
   /* ← changed */
-  overflow-y: auto;
+  overflow-y: hidden;
   backdrop-filter: blur(3px);
 }
 
@@ -455,7 +455,7 @@ h4 {
   border-radius: 24px;
   width: 100%;
   max-width: 720px;
-  max-height: 88vh;
+  max-height: 90vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -520,7 +520,7 @@ h4 {
 .modal-body {
   padding: 24px;
   overflow-y: auto;
-  max-height: calc(88vh - 92px);
+  max-height: calc(90vh - 92px);
 }
 
 /* Skill rows in modal */
