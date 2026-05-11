@@ -46,10 +46,12 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
       aria-label={`Rate skills for ${book.name}`}
     >
       <div
+        <div
         className="modal-sheet"
         style={{
-          transform: isVisible ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)'
+          transform: isVisible ? 'scale(1)' : 'scale(0.96)',
+          opacity: isVisible ? 1 : 0,
+          transition: 'transform 0.25s ease, opacity 0.25s ease'
         }}
       >
         {/* Header */}
