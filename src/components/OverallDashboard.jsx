@@ -3,12 +3,13 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
+  PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import { BOOKS, SKILLS, SCORE_COLORS } from '../data/books';
 import { getAllRatings } from '../data/storage';
 import {
@@ -24,7 +25,24 @@ import ProgressBar from './ProgressBar';
 import MilestoneBadge from './MilestoneBadge';
 import SkillLegend from './SkillLegend';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+const SKILL_LINE_COLORS = [
+  '#2563EB',
+  '#BE185D',
+  '#B45309',
+  '#047857',
+  '#DC2626',
+  '#4F46E5'
+];
 
 function getScoreRingColor(avg) {
   if (avg > 3) return '#22C55E';
@@ -38,9 +56,17 @@ function getScoreRingLabel(avg) {
   return 'Keep Going! 💪';
 }
 
+function shortBookName(name) {
+  if (!name) return '';
+  return name.length > 18 ? `${name.slice(0, 16)}...` : name;
+}
+
 export default function OverallDashboard() {
   const allRatings = getAllRatings();
-  const completedBooks = BOOKS.filter(b => allRatings.find(r => r.bookId === b.id));
+  const completedBooks = BOOKS.filter(book =>
+    allRatings.find(rating => rating.bookId === book.id)
+  );
+
   const totalBooks = BOOKS.length;
   const completedCount = completedBooks.length;
 
@@ -59,81 +85,101 @@ export default function OverallDashboard() {
   const topSkill = getTopSkill(skillAverages);
   const developingSkill = getDevelopingSkill(skillAverages);
   const badgeInfo = getBadgeInfo(overallAvg);
-  const insight = generateOverallInsight(overallAvg, topSkill, developingSkill, completedCount, totalBooks);
+
+  const insight = generateOverallInsight(
+    overallAvg,
+    topSkill,
+    developingSkill,
+    completedCount,
+    totalBooks
+  );
 
   const ringColor = getScoreRingColor(overallAvg);
   const ringLabel = getScoreRingLabel(overallAvg);
 
-  const getBarColor = (avg) => {
-    if (avg < 2.0) return '#EF4444';
-    if (avg < 3.0) return '#F97316';
-    if (avg < 3.5) return '#EAB308';
-    return '#22C55E';
+  const lineData = {
+    labels: completedBooks.map(book => shortBookName(book.name)),
+    datasets: SKILLS.map((skill, index) => ({
+      label: skill.label,
+      data: completedBooks.map(book => {
+        const rating = allRatings.find(r => r.bookId === book.id);
+        return rating?.ratings?.[skill.id] || 0;
+      }),
+      borderColor: SKILL_LINE_COLORS[index % SKILL_LINE_COLORS.length],
+      backgroundColor: SKILL_LINE_COLORS[index % SKILL_LINE_COLORS.length],
+      borderWidth: 3,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+      tension: 0.35
+    }))
   };
 
-  const barData = {
-    labels: SKILLS.map(s => [`${s.icon} ${s.label}`, s.desc]),
-    datasets: [{
-      data: SKILLS.map(s => skillAverages[s.id] || 0),
-      backgroundColor: SKILLS.map(s => getBarColor(skillAverages[s.id] || 0)),
-      borderRadius: 6,
-      barPercentage: 0.7
-    }]
-  };
-
-  const barOptions = {
-    indexAxis: 'y',
-    animation: { duration: 800 },
+  const lineOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    layout: {
-      padding: { right: 30 }
+    animation: {
+      duration: 700
     },
     plugins: {
-      legend: { display: false },
+      legend: {
+        position: 'top',
+        labels: {
+          usePointStyle: true,
+          boxWidth: 10,
+          boxHeight: 10,
+          font: {
+            family: 'Inter',
+            size: 12
+          }
+        }
+      },
       tooltip: {
         callbacks: {
-          label: ctx => ` Average: ${ctx.raw.toFixed(1)} / 4`
+          label: ctx => `${ctx.dataset.label}: ${ctx.raw} / 4`
         }
       }
     },
     scales: {
-      x: {
-        min: 0, max: 4,
-        ticks: { stepSize: 1, font: { family: 'Inter', size: 11 } },
-        grid: { color: '#F3F4F6' }
-      },
       y: {
-        ticks: {
-          font: { family: 'Inter', size: 11 },
-          color: '#374151'
+        min: 0,
+        max: 4,
+        title: {
+          display: true,
+          text: 'Skill Score',
+          font: {
+            family: 'Inter',
+            size: 13
+          }
         },
-        grid: { display: false }
+        ticks: {
+          stepSize: 1,
+          font: {
+            family: 'Inter',
+            size: 12
+          }
+        },
+        grid: {
+          color: '#E5E7EB'
+        }
+      },
+      x: {
+        ticks: {
+          font: {
+            family: 'Inter',
+            size: 11
+          },
+          maxRotation: 40,
+          minRotation: 35
+        },
+        grid: {
+          color: '#F3F4F6'
+        }
       }
-    }
-  };
-
-  const scoreLabelPlugin = {
-    id: 'scoreLabel',
-    afterDatasetsDraw(chart) {
-      const { ctx, data } = chart;
-      ctx.save();
-      const meta = chart.getDatasetMeta(0);
-      meta.data.forEach((bar, index) => {
-        const val = data.datasets[0].data[index];
-        const color = data.datasets[0].backgroundColor[index];
-        ctx.fillStyle = color;
-        ctx.font = 'bold 12px Inter';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(val.toFixed(1), bar.x + 8, bar.y);
-      });
-      ctx.restore();
     }
   };
 
   return (
     <div className="overall-dashboard">
-      {/* Overall Score Ring */}
       <div className="card overall-ring-card">
         <ProgressBar
           value={overallAvg / 4}
@@ -143,44 +189,51 @@ export default function OverallDashboard() {
           label={overallAvg.toFixed(1)}
           sublabel="/ 4"
         />
-        <p className="ring-label" style={{ color: ringColor }}>{ringLabel}</p>
-        <p className="ring-subtitle">Based on {completedCount} of {totalBooks} completed activities</p>
+        <p className="ring-label" style={{ color: ringColor }}>
+          {ringLabel}
+        </p>
+        <p className="ring-subtitle">
+          Based on {completedCount} of {totalBooks} completed activities
+        </p>
       </div>
 
-      {/* Positive Highlight */}
       <div className="card highlight-card strength-highlight">
         <div className="highlight-icon">⭐</div>
         <div className="highlight-body">
           <div className="highlight-tag">Strongest Skill Across All Books</div>
-          <div className="highlight-name">{topSkill.skill?.label} — Avg {topSkill.value?.toFixed(1)} / 4</div>
+          <div className="highlight-name">
+            {topSkill.skill?.label} — Avg {topSkill.value?.toFixed(1)} / 4
+          </div>
           <div className="highlight-desc">
             Your child consistently shows strong {topSkill.skill?.label} abilities throughout their reading journey!
           </div>
         </div>
       </div>
 
-      {/* Gentle Development Card */}
       <div className="card highlight-card developing-highlight">
         <div className="highlight-icon">🌱</div>
         <div className="highlight-body">
           <div className="highlight-tag">Growing Area</div>
-          <div className="highlight-name">{developingSkill.skill?.label} — Avg {developingSkill.value?.toFixed(1)} / 4</div>
+          <div className="highlight-name">
+            {developingSkill.skill?.label} — Avg {developingSkill.value?.toFixed(1)} / 4
+          </div>
           <div className="highlight-desc">
             With encouragement and fun activities, your child's {developingSkill.skill?.label} skills are on a wonderful path of growth!
           </div>
         </div>
       </div>
 
-      {/* Average Bar Chart */}
-      <div className="card" style={{ padding: '24px', borderRadius: '16px', backgroundColor: '#fff', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
-        <h3 className="section-title" style={{ marginBottom: '4px' }}>Average Skill Performance</h3>
-        <p className="overall-subtitle" style={{ marginBottom: '20px', fontSize: '13px' }}>Based on {completedCount} completed books</p>
-        <div style={{ height: 300, position: 'relative' }}>
-          <Bar data={barData} options={barOptions} plugins={[scoreLabelPlugin]} />
+      <div className="card analysis-radar-card">
+        <h3 className="section-title">📈 Skill Growth Across Books</h3>
+        <p className="overall-subtitle" style={{ marginBottom: '20px' }}>
+          Each line shows how one skill has grown across every book your child completed
+        </p>
+
+        <div style={{ height: 380, position: 'relative' }}>
+          <Line data={lineData} options={lineOptions} />
         </div>
       </div>
 
-      {/* Color-coded Summary Table */}
       <div className="card">
         <h3 className="section-title">Full Skills Breakdown</h3>
         <div className="table-scroll-wrapper">
@@ -188,7 +241,9 @@ export default function OverallDashboard() {
             <thead>
               <tr>
                 <th>Book</th>
-                {SKILLS.map(s => <th key={s.id}>{s.icon} {s.label}</th>)}
+                {SKILLS.map(skill => (
+                  <th key={skill.id}>{skill.icon} {skill.label}</th>
+                ))}
                 <th>Avg</th>
               </tr>
             </thead>
@@ -198,19 +253,25 @@ export default function OverallDashboard() {
                 const avg = rating?.averageScore || 0;
                 const avgKey = scoreColorKey(avg);
                 const avgSc = SCORE_COLORS[avgKey];
+
                 return (
-                  <tr key={book.id} style={{ background: idx % 2 === 0 ? '#FFFFFF' : '#FAFAFA' }}>
+                  <tr
+                    key={book.id}
+                    style={{ background: idx % 2 === 0 ? '#FFFFFF' : '#FAFAFA' }}
+                  >
                     <td className="table-book-cell">
                       <span className="table-book-emoji">{book.emoji}</span>
                       <span className="table-book-name">{book.name}</span>
                     </td>
-                    {SKILLS.map(s => {
-                      const score = rating?.ratings[s.id] || 0;
+
+                    {SKILLS.map(skill => {
+                      const score = rating?.ratings?.[skill.id] || 0;
                       const key = scoreColorKey(score);
                       const sc = SCORE_COLORS[key];
+
                       return (
                         <td
-                          key={s.id}
+                          key={skill.id}
                           className="table-score-cell"
                           style={{ background: sc.bg, color: sc.text }}
                         >
@@ -218,9 +279,14 @@ export default function OverallDashboard() {
                         </td>
                       );
                     })}
+
                     <td
                       className="table-score-cell table-avg-cell"
-                      style={{ background: avgSc.bg, color: avgSc.text, fontWeight: 700 }}
+                      style={{
+                        background: avgSc.bg,
+                        color: avgSc.text,
+                        fontWeight: 700
+                      }}
                     >
                       {avg.toFixed(1)}
                     </td>
@@ -232,19 +298,16 @@ export default function OverallDashboard() {
         </div>
       </div>
 
-      {/* Milestone Badges */}
       <div className="card">
         <h3 className="section-title">🏅 Milestone Badges</h3>
         <MilestoneBadge currentTier={badgeInfo.tier} />
       </div>
 
-      {/* Overall Insight */}
       <div className="card insight-card">
         <h3 className="section-title">✨ Your Child's Journey</h3>
         <p className="insight-text">{insight}</p>
       </div>
 
-      {/* Print Button */}
       <div className="print-row">
         <button className="btn-primary btn-print" onClick={() => window.print()}>
           🖨️ Print Report
