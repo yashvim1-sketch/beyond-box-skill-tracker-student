@@ -48,7 +48,7 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
       <div
         className="modal-sheet"
         style={{
-          transform: isVisible ? 'translate(-50%, -50%) scale(1)' : 'translate(-50%, -50%) scale(0.96)',
+          transform: isVisible ? 'scale(1)' : 'translate(-50%, -50%) scale(0.96)',
           opacity: isVisible ? 1 : 0,
           transition: 'transform 0.25s ease, opacity 0.25s ease'
         }}

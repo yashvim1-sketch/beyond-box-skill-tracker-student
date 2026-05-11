@@ -436,29 +436,28 @@ h4 {
 
 /* ── MODAL ────────────────────────────────────────────────── */
 .modal-overlay {
-  position: fixed !important;
-  inset: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background: rgba(0, 0, 0, 0.55) !important;
-  z-index: 9999 !important;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
   backdrop-filter: blur(3px);
-  overflow: hidden !important;
 }
 
 .modal-sheet {
-  position: fixed !important;
-  left: 50% !important;
-  top: 50% !important;
-  width: calc(100vw - 32px) !important;
-  max-width: 720px !important;
-  max-height: 88vh !important;
-  background: #fff !important;
-  border-radius: 24px !important;
-  overflow: hidden !important;
-  display: flex !important;
-  flex-direction: column !important;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35) !important;
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
 }
 
 .modal-header {
@@ -518,12 +517,8 @@ h4 {
 
 .modal-body {
   padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  overflow-y: auto !important;
-  max-height: calc(88vh - 92px) !important;
-  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  max-height: calc(88vh - 92px);
 }
 
 /* Skill rows in modal */
