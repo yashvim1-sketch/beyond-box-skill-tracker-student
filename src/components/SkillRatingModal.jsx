@@ -46,7 +46,6 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
       aria-label={`Rate skills for ${book.name}`}
     >
       <div
-        <div
         className="modal-sheet"
         style={{
           transform: isVisible ? 'scale(1)' : 'scale(0.96)',
