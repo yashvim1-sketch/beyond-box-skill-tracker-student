@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/beyond-box-skill-tracker-student/static/css/main.d72705d1.css",
-    "main.js": "/beyond-box-skill-tracker-student/static/js/main.36219394.js",
+    "main.js": "/beyond-box-skill-tracker-student/static/js/main.850a0b07.js",
     "index.html": "/beyond-box-skill-tracker-student/index.html",
     "main.d72705d1.css.map": "/beyond-box-skill-tracker-student/static/css/main.d72705d1.css.map",
-    "main.36219394.js.map": "/beyond-box-skill-tracker-student/static/js/main.36219394.js.map"
+    "main.850a0b07.js.map": "/beyond-box-skill-tracker-student/static/js/main.850a0b07.js.map"
   },
   "entrypoints": [
     "static/css/main.d72705d1.css",
-    "static/js/main.36219394.js"
+    "static/js/main.850a0b07.js"
   ]
 }
