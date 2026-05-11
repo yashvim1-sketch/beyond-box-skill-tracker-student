@@ -441,9 +441,11 @@ h4 {
   background: rgba(0, 0, 0, 0.55);
   z-index: 9999;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  /* ← changed */
   justify-content: center;
-  padding: 16px;
+  padding: 5vh 16px;
+  /* ← changed */
   overflow-y: auto;
   backdrop-filter: blur(3px);
 }
