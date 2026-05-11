@@ -1,7 +1,7 @@
 {
-  "name": "beyond-box-skill-tracker",
-  "homepage": "https://yashvim1-sketch.github.io/beyond-box-skill-tracker",
-  "version": "1.0.0",
+  "name": "beyond-box-skill-tracker-student",
+  "homepage": "https://yashvim1-sketch.github.io/beyond-box-skill-tracker-student",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "chart.js": "^4.0.0",
