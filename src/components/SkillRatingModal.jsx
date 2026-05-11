@@ -14,8 +14,15 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
     if (existingData) {
       setRatings(existingData.ratings);
     }
+    document.body.style.overflow = 'hidden';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     // Animate in
     setTimeout(() => setIsVisible(true), 10);
+
+    //Cleanup
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [book.id]);
 
   const handleClose = () => {
