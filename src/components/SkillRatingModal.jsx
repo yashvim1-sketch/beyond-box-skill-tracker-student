@@ -3,7 +3,16 @@ import { SKILLS, RATING_COLORS } from '../data/books';
 import { getBookRating, saveBookRating } from '../data/storage';
 import SkillLegend from './SkillLegend';
 
-export default function SkillRatingModal({ book, onClose, onSubmit }) {
+/**
+ * SkillRatingModal
+ *
+ * Props:
+ *  - book     {object}   The book being rated
+ *  - canEdit  {boolean}  If false (tutor_student), all inputs are disabled/read-only
+ *  - onClose  {fn}       Called when the X button is clicked (no save)
+ *  - onSubmit {fn}       Called as onSubmit(book, ratings) after a successful save
+ */
+export default function SkillRatingModal({ book, canEdit = true, onClose, onSubmit }) {
   const [ratings, setRatings] = useState({});
   const [tooltipVisible, setTooltipVisible] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -16,10 +25,8 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
     }
     document.body.style.overflow = 'hidden';
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Animate in
     setTimeout(() => setIsVisible(true), 10);
 
-    //Cleanup
     return () => {
       document.body.style.overflow = '';
     };
@@ -31,16 +38,19 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
   };
 
   const handleSelect = (skillId, value) => {
+    if (!canEdit) return; // guard against keyboard events when disabled
     setRatings(prev => ({ ...prev, [skillId]: value }));
   };
 
   const allRated = SKILLS.every(s => ratings[s.id] !== undefined);
 
   const handleSubmit = () => {
-    if (!allRated) return;
+    if (!allRated || !canEdit) return;
+    // Save to localStorage first (works in standalone + Wix modes)
     saveBookRating(book.id, ratings);
     setIsVisible(false);
-    setTimeout(() => onClose(), 300);
+    // Pass book + ratings back so HomePage can sync to Wix CMS
+    setTimeout(() => onSubmit(book, ratings), 300);
   };
 
   return (
@@ -66,18 +76,29 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
             <span className="modal-book-emoji">{book.emoji}</span>
             <div>
               <h2 className="modal-book-name">{book.name}</h2>
-              <p className="modal-subtitle">How did this book help your child?</p>
+              <p className="modal-subtitle">
+                {canEdit ? 'How did this book help your child?' : 'Skill ratings for this book'}
+              </p>
             </div>
           </div>
           <button className="modal-close-btn" onClick={handleClose} aria-label="Close modal">✕</button>
         </div>
 
         <div className="modal-body">
+
+          {/* ── Restriction message for tutor_student ──────────── */}
+          {!canEdit && (
+            <div className="modal-restriction-msg" role="alert">
+              <span className="modal-restriction-icon">🔒</span>
+              <span>You don't have access to edit your marks. Your tutor will update them for you.</span>
+            </div>
+          )}
+
           {/* Skill rows */}
           {SKILLS.map(skill => {
             const selected = ratings[skill.id];
             return (
-              <div key={skill.id} className="skill-row">
+              <div key={skill.id} className={`skill-row ${!canEdit ? 'skill-row--disabled' : ''}`}>
                 <div className="skill-row-header">
                   <span className="skill-icon">{skill.icon}</span>
                   <div className="skill-name">
@@ -107,15 +128,16 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
                     return (
                       <button
                         key={val}
-                        className={`rating-pill ${isSelected ? 'rating-pill--selected' : ''}`}
+                        className={`rating-pill ${isSelected ? 'rating-pill--selected' : ''} ${!canEdit ? 'rating-pill--readonly' : ''}`}
                         style={isSelected ? {
-                          background: rc.bg,
-                          color: rc.text,
-                          transform: 'scale(1.08)',
-                          boxShadow: `0 4px 14px ${rc.bg}88`,
-                          border: `2px solid ${rc.bg}`
+                          background:  rc.bg,
+                          color:       rc.text,
+                          transform:   'scale(1.08)',
+                          boxShadow:   `0 4px 14px ${rc.bg}88`,
+                          border:      `2px solid ${rc.bg}`
                         } : {}}
                         onClick={() => handleSelect(skill.id, val)}
+                        disabled={!canEdit}
                         aria-label={`${rc.label} for ${skill.label}`}
                         aria-pressed={isSelected}
                       >
@@ -131,15 +153,17 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
           {/* Legend */}
           <SkillLegend compact />
 
-          {/* Submit */}
-          <button
-            className="btn-primary modal-submit-btn"
-            style={allRated ? { background: book.bgGradient } : {}}
-            disabled={!allRated}
-            onClick={handleSubmit}
-          >
-            {existing ? "Update Scores" : "Save Scores"}
-          </button>
+          {/* Submit — only shown for home_learner (canEdit = true) */}
+          {canEdit && (
+            <button
+              className="btn-primary modal-submit-btn"
+              style={allRated ? { background: book.bgGradient } : {}}
+              disabled={!allRated}
+              onClick={handleSubmit}
+            >
+              {existing ? 'Update Scores' : 'Save Scores'}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getBookRating } from '../data/storage';
 
-export default function BookCard({ book, onSelect, onUndo }) {
+export default function BookCard({ book, canEdit = true, onSelect, onUndo }) {
   const saved = getBookRating(book.id);
   const isCompleted = !!saved;
   const [showConfirm, setShowConfirm] = useState(false);
@@ -57,7 +57,7 @@ export default function BookCard({ book, onSelect, onUndo }) {
         )}
       </div>
 
-      {isCompleted && !showConfirm && (
+      {isCompleted && canEdit && !showConfirm && (
         <button className="book-card-undo" onClick={handleUndoClick}>
           ↩ Undo
         </button>

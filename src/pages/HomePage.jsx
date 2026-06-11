@@ -5,12 +5,22 @@ import { getMotivationalText } from '../utils/scoreUtils';
 import BookCard from '../components/BookCard';
 import SkillRatingModal from '../components/SkillRatingModal';
 import ProgressBar from '../components/ProgressBar';
+import useWixBridge from '../hooks/useWixBridge';
 
 export default function HomePage() {
   const [selectedBook, setSelectedBook] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [remarks, setRemarks] = useState(getRemarks);
   const [remarksSaved, setRemarksSaved] = useState('');
+
+  // Wix bridge — handles role, canEdit, CMS syncing via postMessage
+  const {
+    wixReady,
+    canEdit,
+    inWix,
+    saveScoresToWix,
+    saveRemarksToWix
+  } = useWixBridge();
 
   const allRatings = getAllRatings();
   const completedIds = new Set(allRatings.map(r => r.bookId));
@@ -29,19 +39,54 @@ export default function HomePage() {
     setRefreshKey(k => k + 1);
   }, []);
 
+  // Called by SkillRatingModal after saving locally — also syncs to Wix CMS
+  const handleModalSubmit = useCallback((book, ratings) => {
+    setSelectedBook(null);
+    setRefreshKey(k => k + 1);
+    if (inWix && canEdit && book && ratings) {
+      saveScoresToWix(book.id, book.name, ratings);
+    }
+  }, [inWix, canEdit, saveScoresToWix]);
+
   const handleUndoBook = useCallback((bookId) => {
+    if (!canEdit) return; // tutor_student cannot undo
     clearBookRating(bookId);
     setRefreshKey(k => k + 1);
-  }, []);
+  }, [canEdit]);
 
   const handleSaveRemarks = () => {
     saveRemarks(remarks);
+    if (inWix && canEdit) {
+      saveRemarksToWix(remarks);
+    }
     setRemarksSaved('Remarks saved successfully!');
     setTimeout(() => setRemarksSaved(''), 3000);
   };
 
+  // ── Loading state (inside Wix iframe, waiting for WIX_INIT) ──────────────
+  if (!wixReady) {
+    return (
+      <div className="skill-tracker-loading">
+        <div className="loading-spinner"></div>
+        <p className="loading-text">Loading your Skill Tracker...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="page-fade home-page" key={refreshKey}>
+
+      {/* ── Tutor-Student Access Restriction Banner ──────────────── */}
+      {!canEdit && (
+        <div className="access-restriction-banner" role="alert">
+          <span className="access-restriction-icon">🔒</span>
+          <div className="access-restriction-text">
+            <strong>View Only</strong>
+            <p>You don't have access to edit your marks. Your tutor will update them for you.</p>
+          </div>
+        </div>
+      )}
+
       {/* Hero Header */}
       <header className="home-header">
         <div className="home-header-gradient-strip"></div>
@@ -83,6 +128,7 @@ export default function HomePage() {
             <BookCard
               key={book.id}
               book={book}
+              canEdit={canEdit}
               onSelect={handleSelectBook}
               onUndo={handleUndoBook}
             />
@@ -93,26 +139,38 @@ export default function HomePage() {
       {/* Remarks Section */}
       <section className="remarks-section">
         <div className="page-inner">
-          <div className="card tutor-comment-card">
+          <div className={`card tutor-comment-card ${!canEdit ? 'remarks-disabled' : ''}`}>
             <h3 className="section-title">📝 Remarks</h3>
+
+            {!canEdit && (
+              <p className="remarks-view-only-note">
+                🔒 Remarks are managed by your tutor.
+              </p>
+            )}
+
             <textarea
               className="tutor-comment-textarea"
-              placeholder="Write your remarks here..."
+              placeholder={canEdit ? "Write your remarks here..." : "No remarks added yet."}
               value={remarks}
-              onChange={e => setRemarks(e.target.value)}
+              onChange={e => canEdit && setRemarks(e.target.value)}
               rows={6}
+              disabled={!canEdit}
+              readOnly={!canEdit}
+              aria-label="Remarks"
             />
-            <div className="tutor-comment-footer">
-              <button
-                className="btn-primary tutor-comment-save-btn"
-                onClick={handleSaveRemarks}
-              >
-                💾 Save Comment
-              </button>
-              {remarksSaved && (
-                <span className="tutor-comment-success">✅ {remarksSaved}</span>
-              )}
-            </div>
+            {canEdit && (
+              <div className="tutor-comment-footer">
+                <button
+                  className="btn-primary tutor-comment-save-btn"
+                  onClick={handleSaveRemarks}
+                >
+                  💾 Save Remarks
+                </button>
+                {remarksSaved && (
+                  <span className="tutor-comment-success">✅ {remarksSaved}</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -140,12 +198,13 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Modal */}
+      {/* Skill Rating Modal */}
       {selectedBook && (
         <SkillRatingModal
           book={selectedBook}
+          canEdit={canEdit}
           onClose={handleModalClose}
-          onSubmit={handleModalClose}
+          onSubmit={handleModalSubmit}
         />
       )}
     </div>

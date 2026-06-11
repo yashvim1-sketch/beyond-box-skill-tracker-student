@@ -126,7 +126,7 @@ export const SKILLS = [
   { id: "cognitive",        label: "Cognitive",         icon: "🧠", tooltip: "Solving problems by thinking deeply", desc: "Thinking & problem solving" },
   { id: "creative",         label: "Creative",          icon: "🎨", tooltip: "Imagining and making something unique", desc: "Imagination & expression" },
   { id: "communication",    label: "Communication",     icon: "💬", tooltip: "Sharing ideas or explaining clearly", desc: "Sharing ideas clearly" },
-  { id: "social_emotional", label: "Social-Emotional",  icon: "🤝", tooltip: "Working together and understanding feelings", desc: "Teamwork & emotions" },
+  { id: "socialEmotional", label: "Social-Emotional",  icon: "🤝", tooltip: "Working together and understanding feelings", desc: "Teamwork & emotions" },
   { id: "physical",         label: "Physical",          icon: "🏃", tooltip: "Using hands, tools or exploring with senses", desc: "Hands-on & sensory skills" },
   { id: "practical",        label: "Practical",         icon: "🔧", tooltip: "Applying learning to real-life situations", desc: "Real-life application" }
 ];
