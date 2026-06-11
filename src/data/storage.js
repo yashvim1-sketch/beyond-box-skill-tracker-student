@@ -1,4 +1,5 @@
 const KEY_PREFIX = "bb_book_";
+const REMARKS_KEY = "bb_tutor_remarks";
 
 export function saveBookRating(bookId, ratings) {
   const allValues = Object.values(ratings);
@@ -50,4 +51,12 @@ export function clearAll() {
     if (key && key.startsWith(KEY_PREFIX)) keysToRemove.push(key);
   }
   keysToRemove.forEach(k => localStorage.removeItem(k));
+}
+
+export function saveRemarks(text) {
+  localStorage.setItem(REMARKS_KEY, text);
+}
+
+export function getRemarks() {
+  return localStorage.getItem(REMARKS_KEY) || '';
 }

@@ -416,6 +416,71 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
+/* Remarks Section */
+.remarks-section {
+  padding: 0;
+}
+
+/* Tutor Comment Card (shared between OverallDashboard & Remarks section) */
+.tutor-comment-card {
+  border-left: 4px solid #6366F1;
+}
+
+.tutor-comment-hint {
+  font-size: 0.88rem;
+  color: #6B7280;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.tutor-comment-textarea {
+  width: 100%;
+  min-height: 140px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  color: #374151;
+  background: #FAFAFA;
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
+  line-height: 1.6;
+}
+
+.tutor-comment-textarea:focus {
+  border-color: #6366F1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  background: #fff;
+}
+
+.tutor-comment-textarea::placeholder {
+  color: #9CA3AF;
+}
+
+.tutor-comment-footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.tutor-comment-save-btn {
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+}
+
+.tutor-comment-save-btn:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+}
+
+.tutor-comment-success {
+  font-size: 0.85rem;
+  color: #16A34A;
+  font-weight: 500;
+}
+
 /* Overall CTA */
 .overall-cta {
   text-align: center;

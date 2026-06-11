@@ -38,9 +38,9 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
 
   const handleSubmit = () => {
     if (!allRated) return;
-    const saved = saveBookRating(book.id, ratings);
+    saveBookRating(book.id, ratings);
     setIsVisible(false);
-    setTimeout(() => onSubmit(book, saved), 300);
+    setTimeout(() => onClose(), 300);
   };
 
   return (
@@ -138,7 +138,7 @@ export default function SkillRatingModal({ book, onClose, onSubmit }) {
             disabled={!allRated}
             onClick={handleSubmit}
           >
-            {existing ? "Update Analysis →" : "Generate Analysis →"}
+            {existing ? "Update Scores" : "Save Scores"}
           </button>
         </div>
       </div>

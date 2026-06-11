@@ -1,16 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BOOKS } from '../data/books';
-import { getAllRatings, clearBookRating } from '../data/storage';
+import { getAllRatings, clearBookRating, saveRemarks, getRemarks } from '../data/storage';
 import { getMotivationalText } from '../utils/scoreUtils';
 import BookCard from '../components/BookCard';
 import SkillRatingModal from '../components/SkillRatingModal';
 import ProgressBar from '../components/ProgressBar';
 
 export default function HomePage() {
-  const navigate = useNavigate();
   const [selectedBook, setSelectedBook] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [remarks, setRemarks] = useState(getRemarks);
+  const [remarksSaved, setRemarksSaved] = useState('');
 
   const allRatings = getAllRatings();
   const completedIds = new Set(allRatings.map(r => r.bookId));
@@ -18,7 +18,7 @@ export default function HomePage() {
   const totalCount = BOOKS.length;
   const progressValue = totalCount > 0 ? completedCount / totalCount : 0;
   const motivationalText = getMotivationalText(completedCount, totalCount);
-  const canViewOverall = completedCount > 0;
+  const canViewDashboard = completedCount > 0;
 
   const handleSelectBook = useCallback((book) => {
     setSelectedBook(book);
@@ -29,16 +29,16 @@ export default function HomePage() {
     setRefreshKey(k => k + 1);
   }, []);
 
-  const handleModalSubmit = useCallback((book, saved) => {
-    setSelectedBook(null);
-    setRefreshKey(k => k + 1);
-    navigate(`/book/${book.id}`);
-  }, [navigate]);
-
   const handleUndoBook = useCallback((bookId) => {
     clearBookRating(bookId);
     setRefreshKey(k => k + 1);
   }, []);
+
+  const handleSaveRemarks = () => {
+    saveRemarks(remarks);
+    setRemarksSaved('Remarks saved successfully!');
+    setTimeout(() => setRemarksSaved(''), 3000);
+  };
 
   return (
     <div className="page-fade home-page" key={refreshKey}>
@@ -90,22 +90,51 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Overall CTA */}
+      {/* Remarks Section */}
+      <section className="remarks-section">
+        <div className="page-inner">
+          <div className="card tutor-comment-card">
+            <h3 className="section-title">📝 Remarks</h3>
+            <textarea
+              className="tutor-comment-textarea"
+              placeholder="Write your remarks here..."
+              value={remarks}
+              onChange={e => setRemarks(e.target.value)}
+              rows={6}
+            />
+            <div className="tutor-comment-footer">
+              <button
+                className="btn-primary tutor-comment-save-btn"
+                onClick={handleSaveRemarks}
+              >
+                💾 Save Comment
+              </button>
+              {remarksSaved && (
+                <span className="tutor-comment-success">✅ {remarksSaved}</span>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Dashboard CTA */}
       <div className="overall-cta">
-        {canViewOverall ? (
-          <button
+        {canViewDashboard ? (
+          <a
             className="btn-primary btn-overall"
-            onClick={() => navigate('/overall')}
+            href="https://www.thebeyondbox.org/student-dashboard"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            View Overall Analysis →
-          </button>
+            View Dashboard →
+          </a>
         ) : (
           <button
             className="btn-primary btn-overall btn-disabled"
             disabled
-            title="Complete at least 1 book to view analysis"
+            title="Complete at least 1 book to view dashboard"
           >
-            View Overall Analysis
+            View Dashboard
             <span className="btn-disabled-hint"> (complete a book first)</span>
           </button>
         )}
@@ -116,7 +145,7 @@ export default function HomePage() {
         <SkillRatingModal
           book={selectedBook}
           onClose={handleModalClose}
-          onSubmit={handleModalSubmit}
+          onSubmit={handleModalClose}
         />
       )}
     </div>
