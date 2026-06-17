@@ -112,6 +112,17 @@ export default function useWixBridge() {
     });
   }, [sendToWix]);
 
+  /**
+   * Call this after user clears ratings (undoes book ratings) locally.
+   * Sends bookId to Wix parent which deletes the entry from BookScores CMS.
+   */
+  const deleteScoresFromWix = useCallback((bookId) => {
+    sendToWix({
+      type: 'DELETE_SCORES',
+      bookId
+    });
+  }, [sendToWix]);
+
   return {
     wixReady,        // false until WIX_INIT received (in iframe), true immediately (standalone)
     canEdit,         // true for home_learner, false for tutor_student
@@ -119,6 +130,7 @@ export default function useWixBridge() {
     memberId,        // Wix member ID string
     inWix,           // true if running inside Wix iframe
     saveScoresToWix,
-    saveRemarksToWix
+    saveRemarksToWix,
+    deleteScoresFromWix
   };
 }
