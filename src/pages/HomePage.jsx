@@ -19,8 +19,7 @@ export default function HomePage() {
     canEdit,
     inWix,
     saveScoresToWix,
-    saveRemarksToWix,
-    deleteScoresFromWix
+    saveRemarksToWix
   } = useWixBridge();
 
   const allRatings = getAllRatings();
@@ -53,10 +52,7 @@ export default function HomePage() {
     if (!canEdit) return; // tutor_student cannot undo
     clearBookRating(bookId);
     setRefreshKey(k => k + 1);
-    if (inWix && canEdit) {
-      deleteScoresFromWix(bookId);
-    }
-  }, [inWix, canEdit, deleteScoresFromWix]);
+  }, [canEdit]);
 
   const handleSaveRemarks = () => {
     saveRemarks(remarks);
