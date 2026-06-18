@@ -1,6 +1,6 @@
 export const BOOKS = [
   {
-    id: "maries_mysterious_rock",
+    id: "marie_mysterious_rock",
     name: "Marie's Mysterious Rock",
     subtitle: "Humans of Science STEM Series",
     color: "#E8A020",
@@ -11,7 +11,7 @@ export const BOOKS = [
     scientist: "Marie Curie"
   },
   {
-    id: "einsteins_wonders",
+    id: "einstein_wonders",
     name: "Einstein's Wonders",
     subtitle: "Humans of Science STEM Series",
     color: "#7B52C8",
@@ -33,7 +33,7 @@ export const BOOKS = [
     scientist: "Archimedes"
   },
   {
-    id: "teslas_dream",
+    id: "tesla_dream",
     name: "Tesla's Dream",
     subtitle: "Humans of Science STEM Series",
     color: "#2255AA",
@@ -55,7 +55,7 @@ export const BOOKS = [
     scientist: "Archimedes"
   },
   {
-    id: "katherines_courage",
+    id: "katherine_courage",
     name: "Katherine's Courage",
     subtitle: "Humans of Science STEM Series",
     color: "#2299CC",
@@ -66,7 +66,7 @@ export const BOOKS = [
     scientist: "Katherine Johnson"
   },
   {
-    id: "adas_algorithm",
+    id: "ada_algorithm",
     name: "Ada's Algorithm",
     subtitle: "Humans of Science STEM Series",
     color: "#C8882A",
@@ -77,7 +77,7 @@ export const BOOKS = [
     scientist: "Ada Lovelace"
   },
   {
-    id: "vikrams_victory",
+    id: "vikram_victory",
     name: "Vikram's Victory",
     subtitle: "Humans of Science STEM Series",
     color: "#BB2233",
@@ -110,7 +110,7 @@ export const BOOKS = [
     scientist: "Rosalind Franklin"
   },
   {
-    id: "maries_legacy",
+    id: "marie_legacy_lives_on",
     name: "Marie's Legacy Lives On",
     subtitle: "Humans of Science STEM Series",
     color: "#55AA22",
